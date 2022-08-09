@@ -1,0 +1,41 @@
+add library <%
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+ %>!
+//Vari�vel de inst�ncia respectiva!
+use fallUnit with type FallRegisterUnit!
+use csvFile with type String and default "'/home/brlebtag/Documentos/Mestrado/output.csv'"!
+use csvOutputFile with type File!
+use writer with type PrintWriter!
+use csvWriter with type FileWriter!
+
+//Porta de entrada!
+accepts input on FallRegisterUnit with type FallRegisterUnit!
+
+
+//Maquina de Estados!
+to start passivate in s0!
+when in s0 and receive FallRegisterUnit go to s0!
+
+//Evento de Entrada!
+external event for s0 with FallRegisterUnit
+<%
+
+fallUnit = (FallRegisterUnit) messageList.get(0).getData();
+assert(fallUnit != null);
+
+try{      
+      
+	  csvWriter = new FileWriter(csvFile, true);
+	  csvWriter.append(fallUnit.getState() +" ; " + fallUnit.isUndetected() +" ; " + fallUnit.isBathroomFlag() +" ;");
+	  csvWriter.append("\n");
+	  csvWriter.flush();  
+	  csvWriter.close(); 
+	  
+
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+%>!

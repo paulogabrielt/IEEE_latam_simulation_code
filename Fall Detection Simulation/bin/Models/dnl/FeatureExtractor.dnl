@@ -1,0 +1,57 @@
+A HumanData has a wearableValue and nonWearableValue!
+the range of HumanData's wearableValue is float!
+the range of HumanData's nonWearableValue is float!
+
+//Vari�vel de inst�ncia respectiva!
+use wearable with type WearableData!
+use nonWearable with type NonWearableData!
+use humanData with type HumanData and default "new HumanData()"!
+
+
+//Porta de entrada!
+accepts input on WearableData with type WearableData!
+accepts input on NonWearableData with type NonWearableData!
+
+//enrivonment!
+//sense!
+//Porta de saida!
+generates output on HumanData with type HumanData!
+
+Initialize variables
+<%
+humanData.setWearableValue(-1.0f);
+humanData.setNonWearableValue(-1.0f);
+%>! 
+
+//Maquina de Estados!
+to start passivate in passive!
+when in passive and receive NonWearableData go to s1!
+when in passive and receive WearableData go to s1!
+
+
+hold in s1 for time 1!
+after s1 output HumanData!
+from s1 go to passive!
+
+
+external event for passive with WearableData
+<%
+wearable = (WearableData) messageList.get(0).getData();
+assert(wearable != null);
+humanData.setWearableValue(wearable.getValue()); 
+humanData.setNonWearableValue(-1.0f);
+%>!
+
+external event for passive with NonWearableData
+<%
+nonWearable = (NonWearableData) messageList.get(0).getData();
+assert(nonWearable != null);
+humanData.setNonWearableValue(nonWearable.getValue());
+humanData.setWearableValue(-1.0f);
+%>!
+
+//On the transition going out from the state,perform the actions!
+output event for s1
+<%
+output.add(outHumanData, humanData);
+%>!

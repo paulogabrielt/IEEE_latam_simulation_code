@@ -1,0 +1,31 @@
+//Vari�vel de inst�ncia respectiva!
+use wearable with type WearableData!
+
+//Porta de entrada!
+accepts input on WearableData with type WearableData!
+//enrivonment!
+//sense!
+//Porta de saida!
+generates output on WearableData with type WearableData!
+
+
+//Maquina de Estados!
+to start passivate in passive!
+when in passive and receive WearableData go to active!
+hold in active for time 1!
+after active output WearableData!
+from active go to passive!
+
+
+external event for passive with WearableData
+<%
+wearable = (WearableData) messageList.get(0).getData();
+assert(wearable != null);
+%>!
+
+
+//On the transition going out from the state,perform the actions!
+output event for active  
+<%
+output.add(outWearableData, wearable);
+%>!

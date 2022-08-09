@@ -1,0 +1,44 @@
+//Definition of the system layers!
+From the top perspective, HH is made of AcquisitionLayer, ModelingLayer, ReasoningLayer, DisseminationLayer, and StorageLayer!
+
+//Data transactions between the system layers!
+From the top perspective, AcquisitionLayer sends WearableData to ModelingLayer!
+From the top perspective, AcquisitionLayer sends NonWearableData to ModelingLayer!
+From the top perspective, ModelingLayer sends HumanData to ReasoningLayer!
+From the top perspective, ReasoningLayer sends FallRegisterUnit to StorageLayer!
+From the top perspective, ReasoningLayer sends FallOccurrence to DisseminationLayer!
+
+
+//Acquisition Layer composition!
+From the Acquisition perspective, AcquisitionLayer is made of  HumanBody, Wearable, and NonWearable!
+
+From the Acquisition perspective, HumanBody sends WearableData to Wearable!
+From the Acquisition perspective, Wearable sends WearableData to AcquisitionLayer!
+From the Acquisition perspective, HumanBody sends NonWearableData to NonWearable!
+From the Acquisition perspective, NonWearable sends NonWearableData to AcquisitionLayer!
+
+//Modeling Layer composition!
+From the DataStructure perspective, ModelingLayer is made of  FeatureExtractor!
+
+From the DataStructure perspective, ModelingLayer sends WearableData to FeatureExtractor!
+From the DataStructure perspective, ModelingLayer sends NonWearableData to FeatureExtractor!
+From the DataStructure perspective, FeatureExtractor sends HumanData to ModelingLayer!
+
+//Reasoning Layer composition!
+From the DataInterpretation perspective, ReasoningLayer is made of  DataEvaluation!
+
+From the DataInterpretation perspective, ReasoningLayer sends HumanData to DataEvaluation!
+From the DataInterpretation perspective, DataEvaluation sends FallRegisterUnit to ReasoningLayer!
+From the DataInterpretation perspective, DataEvaluation sends FallOccurrence to ReasoningLayer!
+
+//Storage Layer composition!
+From the Storage perspective, StorageLayer is made of  FallRegister!
+
+From the Storage perspective, StorageLayer sends FallRegisterUnit to FallRegister!
+
+//Dissemination Layer composition!
+From the Alert perspective, DisseminationLayer is made of  AlertSystem and Caretaker!
+
+From the Alert perspective, DisseminationLayer sends FallOccurrence to AlertSystem!
+From the Alert perspective, AlertSystem sends DistressSignal to Caretaker!
+From the Alert perspective, AlertSystem sends DistressSignal to DisseminationLayer!

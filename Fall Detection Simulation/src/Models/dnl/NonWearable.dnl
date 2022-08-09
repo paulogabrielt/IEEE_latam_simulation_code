@@ -1,0 +1,28 @@
+//Vari�vel de inst�ncia respectiva!
+use nonWearable with type NonWearableData!
+
+//Porta de entrada!
+accepts input on NonWearableData with type NonWearableData!
+
+//Porta de saida!
+generates output on NonWearableData with type NonWearableData!
+
+//Maquina de Estados!
+to start passivate in passive!
+when in passive and receive NonWearableData go to active!
+hold in active for time 1!
+after active output NonWearableData!
+from active go to passive!
+
+//Evento de Entrada!
+external event for passive with NonWearableData
+<%
+nonWearable = (NonWearableData) messageList.get(0).getData();
+assert(nonWearable != null);
+%>!
+
+//On the transition going out from the state,perform the actions!
+output event for active
+<%
+output.add(outNonWearableData, nonWearable);
+%>!

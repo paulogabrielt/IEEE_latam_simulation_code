@@ -1,0 +1,4 @@
+set name of model as FDS !
+pruned from FDS.ses !
+mergeAll from FDS.ses !
+write class files !

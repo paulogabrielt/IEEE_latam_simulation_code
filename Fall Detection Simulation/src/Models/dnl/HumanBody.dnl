@@ -1,0 +1,126 @@
+add library 
+<%
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Random;
+%>!
+
+A WearableData has a value!
+the range of WearableData's value is float!
+
+A NonWearableData has a value!
+the range of NonWearableData's value is float!
+
+//Instance variables!
+//Instance variables!
+use wearable with type WearableData and default "new WearableData()"!
+use nonWearable with type NonWearableData and default "new NonWearableData()"!
+use csvFile with type String and default "\"/home/brlebtag/Documentos/Mestrado/input.csv\""!
+use br with type BufferedReader!
+use csvDivisor with type String and default "','"!
+use counter with type int and default "1"!
+use rand with type Random!
+use wearablePerc with type double and default "91"!
+
+//Output port!
+generates output on WearableData with type WearableData!
+generates output on NonWearableData with type NonWearableData!
+
+//Initializing variables!
+Initialize variables
+<%
+	 rand = new Random();
+     try {
+	     br = new BufferedReader(new FileReader(csvFile));
+     } catch (Exception e) {
+	        e.printStackTrace();  
+    } 
+%>!
+
+//State machine!
+to start hold in s0 for time 1!
+from s0 go to s0!
+
+hold in s1 for time 1!
+after s1 output WearableData!
+from s1 go to wait!
+
+
+hold in s2 for time 1!
+after s2 output NonWearableData!
+from s2 go to wait!
+
+hold in wait for time 500!
+from wait go to s0!
+
+
+passivate in passive!
+
+//Event for reading the dataset
+Internal event for s0
+<%
+	try {
+		//Tries to read a line in the dataset
+		String line = br.readLine();
+		
+		if (line == null || line == "") {
+			System.out.println("end");
+        	passivateIn("passive");
+	        if (br != null) {
+	            try {
+	                br.close();
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	        }
+			return;
+		}
+		
+		String[] column = line.split(csvDivisor);
+       
+       	float value = Float.parseFloat(column[0]);
+       	
+       	boolean _isWearable = isWearable(wearablePerc);
+       	
+       	System.out.println("-----------> IsWearable? " + (_isWearable ? "true" : "false"));
+       
+         if (_isWearable) {
+         	wearable.setValue(value);
+         	nonWearable.setValue((float)-1.0);
+         	holdIn("s1", 1.0);
+         } else {
+		 	nonWearable.setValue(value);
+		 	wearable.setValue((float)-1.0);
+		 	holdIn("s2", 1.0);
+		 }
+
+    } catch (Exception e) {
+    	System.out.println("Error end");
+    	passivateIn("passive");
+        e.printStackTrace();
+    }
+%>!
+
+//Output events!
+//On the transition going out from the state s0, perform the actions!
+output event for s1
+<%
+output.add(outWearableData, wearable);
+%>!
+output event for s2
+<%
+output.add(outNonWearableData, nonWearable);
+%>!
+
+
+add additional code
+<%
+boolean isWearable(double maxPercentage){
+	
+	double randomDouble = rand.nextDouble() * (100.0 - 0.0) + 0.0;
+	
+	return (randomDouble <= maxPercentage) ? true : false;
+}
+%>!

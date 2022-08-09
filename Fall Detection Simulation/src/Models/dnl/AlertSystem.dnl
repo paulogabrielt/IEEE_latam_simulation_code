@@ -1,0 +1,39 @@
+
+A DistressSignal has a value!
+the range of DistressSignal's value is String!
+
+//Vari�vel de inst�ncia respectiva!
+use fallOccurrence with type FallOccurrence!
+use distress with type DistressSignal!
+
+//Porta de entrada!
+accepts input on FallOccurrence with type FallOccurrence!
+
+//Porta de saida!
+generates output on DistressSignal with type DistressSignal!
+
+//Maquina de Estados!
+to start passivate in s0!
+when in s0 and receive FallOccurrence go to s1!
+hold in s1 for time 1!
+after s1 output DistressSignal!
+from s1 go to s0!
+
+//Evento de Entrada!
+external event for s0 with FallOccurrence
+<%
+fallOccurrence = (FallOccurrence) messageList.get(0).getData();
+assert(fallOccurrence != null);
+
+//If a fall is not detected the system returns to a passive state
+if ( ! fallOccurrence.getValue().equals("Fall")){
+	passivateIn("s0");
+}
+distress = new DistressSignal("Elderly Fall");
+
+%>!
+//On the transition going out from the state,perform the actions!
+output event for s1
+<%
+output.add(outDistressSignal, distress);
+%>!

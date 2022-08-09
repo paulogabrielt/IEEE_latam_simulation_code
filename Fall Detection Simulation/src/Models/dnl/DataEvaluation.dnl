@@ -1,0 +1,98 @@
+add library <%
+import java.util.Random;
+ %>!
+ 
+A FallRegisterUnit has a state, undetected and bathroomFlag!
+the range of FallRegisterUnit's state is String!
+the range of FallRegisterUnit's undetected is boolean!
+the range of FallRegisterUnit's bathroomFlag is boolean!
+
+A FallOccurrence has a value!
+the range of FallOccurrence's value is String!
+
+ 
+//Vari�vel de inst�ncia respectiva!
+use humanData with type HumanData!
+use fallUnit with type FallRegisterUnit and default "new FallRegisterUnit()"!
+use rand with type Random and default "new Random()"!
+use fallValue with type double and default "3.0"!
+use wearableAccuracy with type double and default "68.0"!
+use nonWearableAccuracy with type double and default "79.91"!
+use fallOccurrence with type FallOccurrence and default "new FallOccurrence()"!
+
+//Input port!
+accepts input on HumanData with type HumanData!
+
+//Output port!
+generates output on FallRegisterUnit with type FallRegisterUnit!
+generates output on FallOccurrence with type FallOccurrence!
+
+//State machine!
+to start passivate in s0!
+when in s0 and receive HumanData go to s1!
+hold in s1 for time 1!
+after s1 output FallRegisterUnit!
+from s1 go to s2!
+
+
+hold in s2 for time 1!
+after s2 output FallOccurrence!
+from s2 go to s0!
+
+//Input event!
+external event for s0 with HumanData
+<%
+
+//Reads the first message of the list
+humanData = (HumanData) messageList.get(0).getData();
+assert(humanData != null);
+
+fallUnit.setState("No Fall");
+fallUnit.setBathroomFlag(false);
+fallUnit.setUndetected(false);
+fallOccurrence.setValue("No Fall");
+
+float data = humanData.getWearableValue();
+
+// Identify a fall outside the bathroom
+if (data == fallValue){
+	fallUnit.setState("Fall");
+	fallUnit.setBathroomFlag(false);
+	fallUnit.setUndetected(isUndetected(wearableAccuracy));
+	fallOccurrence.setValue("Fall");
+	
+}
+
+data = humanData.getNonWearableValue();
+
+if (data == fallValue){
+	fallUnit.setState("Fall");
+	fallUnit.setBathroomFlag(true);
+	fallUnit.setUndetected(isUndetected(nonWearableAccuracy));
+	fallOccurrence.setValue("Fall");
+} else if(data != -1) {
+	fallUnit.setBathroomFlag(true);
+}
+
+%>!
+//On the transition going out from the state,perform the actions!
+output event for s1
+<%
+output.add(outFallRegisterUnit, fallUnit);
+%>!
+
+//On the transition going out from the state,perform the actions!
+output event for s2
+<%
+output.add(outFallOccurrence, fallOccurrence);
+%>!
+
+add additional code
+<%
+boolean isUndetected(double maxPercentage){
+	
+	double randomDouble = rand.nextDouble() * (100.0 - 0.0) + 0.0;
+	
+	return (randomDouble <= maxPercentage) ? true : false;
+}
+%>!

@@ -1,0 +1,6 @@
+//Porta de entrada!
+accepts input on DistressSignal with type DistressSignal!
+
+//Maquina de Estados!
+to start passivate in s0!
+when in s0 and receive DistressSignal go to s0!
